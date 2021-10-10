@@ -7,9 +7,6 @@
             parent::__construct();
         }
 
-        //* register error code, start from 0
-        //* 0-> failed to register, unexpected
-        //* 01 -> email already registered
         public function registerUser($email, $pass, $nama, $usia, $jenisKelamin){
             if(!$this->isEmailExist($email)){
 
@@ -18,13 +15,13 @@
                         VALUES('$email', '$pass', '$nama', $usia, $jenisKelamin)");
 
                 if($result){
-                    return $this->successAuthResponse("success register");
+                    return $this->successResponse("success register");
                 }else{
-                    return $this->failedAuthResponse(0, "failed to register");
+                    return $this->failedResponse(11, "failed to register");
                 }
 
             }else{
-                return $this->failedAuthResponse(01, "email already registered");
+                return $this->failedResponse(12, "email already registered");
             }
    
         }
@@ -45,30 +42,53 @@
         //! admin default password admin
         //! admin default password already hashed
 
-        //* register error code, start from 1
-        //* 11-> failed to login, unexpected
-        //* 12-> email hasn't registered
-
         public function login($email, $password){
             if(strcmp($email, "admin@gmail.com")==0 && strcmp($password, '$2y$10$xQl591VMKcwlGsobdRt3f.abv7EiSVC7/10pOFpOied')==0){
                 //success login as admin
-                return $this->successAuthResponse('success to login as admin');
+                return $this->successResponse('success to login as admin');
             }else{
                 if($this->isEmailExist($email)){
-                    return $this->successAuthResponse('success to login as user');
+                    //TODO verify password hash with password input
+                    //TODO add error code with corresponding error, see the error list below
+
+                    return $this->successResponse('success to login as user');
                 }else{
-                    return $this->failedAuthResponse(12, 'email has\'t registered');
+                    return $this->failedResponse(21, 'email has\'t registered');
                 }
             }
         }
 
-        public function failedAuthResponse($code, $message){
+        public function insertDestination($namaWisata, $lokasiWisata, $hargaWisata){
+            $result = $this->conn
+            ->query("INSERT INTO wisata(nama_wisata, lokasi_wisata, harga_wisata)
+                    VALUES('$namaWisata', '$lokasiWisata', $hargaWisata)");
+
+            if($result){
+                return $this->successResponse('success to insert destination');
+            }else{
+                return $this->failedResponse(31, 'failed to insert destination');
+            }
+        }
+
+        //* register error code
+        //* 11-> failed to register, unexpected
+        //* 12 -> email already registered
+
+        //* login error code
+        //* 21-> email hasn't registered
+        //* 22-> wrong password
+
+        //* destination error code
+        //* 31-> failed to insert destination
+
+        public function failedResponse($code, $message){
             return $this->encodeJson($code, $message);
         }
 
-        //* auth success default code is 1
-        public function successAuthResponse($message){
-            return $this->encodeJson(1, $message);
+        //* success response default code is 0
+
+        public function successResponse($message){
+            return $this->encodeJson(0, $message);
         }
 
         public function encodeJson($code, $message){
