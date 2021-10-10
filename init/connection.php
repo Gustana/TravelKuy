@@ -25,6 +25,4 @@
         }
     }
 
-    $c = new Connection();
-
 ?>
