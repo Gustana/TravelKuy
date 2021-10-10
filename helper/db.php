@@ -70,6 +70,23 @@
             }
         }
 
+        public function updateDestination($idWisata, $namaWisata, $lokasiWisata, $hargaWisata){
+            $result = $this->conn
+            ->query("
+                UPDATE wisata SET 
+                nama_wisata = '$namaWisata',
+                lokasi_wisata = '$lokasiWisata',
+                harga_wisata = '$hargaWisata'
+                WHERE id_wisata = $idWisata
+            ");
+
+            if($result){
+                return $this->successResponse('success to update destination');
+            }else{
+                return $this->failedResponse(32, 'failed to update destination');
+            }
+        }
+
         //* register error code
         //* 11-> failed to register, unexpected
         //* 12 -> email already registered
@@ -80,6 +97,7 @@
 
         //* destination error code
         //* 31-> failed to insert destination
+        //* 32-> failed to update destination, unexpected
 
         public function failedResponse($code, $message){
             return $this->encodeJson($code, $message);
