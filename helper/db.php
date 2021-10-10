@@ -97,8 +97,25 @@
             }
         }
 
+        public function buyTicket($idUser, $tanggal, $jumlahTiket, $idWisata, $hargaTiket){
+            $totalHarga = $hargaTiket * $jumlahTiket;
+
+            $result = $this->conn
+                ->query("
+                    INSERT pembelian_tiket(id_user, tanggal, jumlah_tiket, id_wisata, total_harga)
+                    VALUES ($idUser, $tanggal, $jumlahTiket, $idWisata, $totalHarga)
+                ");
+
+            if($result){
+                return $this->successResponse('success to buy ticket');
+            }else{
+                return $this->failedResponse(41, 'failed to buy ticket');
+            }
+            
+        }
+
         //* register error code
-        //* 11-> failed to register, unexpected
+        //* 11-> failed to register
         //* 12 -> email already registered
 
         //* login error code
@@ -107,8 +124,11 @@
 
         //* destination error code
         //* 31-> failed to insert destination
-        //* 32-> failed to update destination, unexpected
-        //* 33-> failed to delete destination, unexpected
+        //* 32-> failed to update destination
+        //* 33-> failed to delete destination
+
+        //* ticket error code
+        //* 41 ->faild to buy ticket
 
         public function failedResponse($code, $message){
             return $this->encodeJson($code, $message);
