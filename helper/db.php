@@ -87,6 +87,16 @@
             }
         }
 
+        public function deleteDestination($idWisata){
+            $result = $this->conn->query("DELETE FROM wisata WHERE id_wisata = $idWisata");
+
+            if($result){
+                return $this->successResponse('success to delete destination');
+            }else{
+                return $this->failedResponse(33, 'failed to delete destination');
+            }
+        }
+
         //* register error code
         //* 11-> failed to register, unexpected
         //* 12 -> email already registered
@@ -98,6 +108,7 @@
         //* destination error code
         //* 31-> failed to insert destination
         //* 32-> failed to update destination, unexpected
+        //* 33-> failed to delete destination, unexpected
 
         public function failedResponse($code, $message){
             return $this->encodeJson($code, $message);
