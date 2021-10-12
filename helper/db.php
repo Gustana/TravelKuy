@@ -121,7 +121,7 @@
 
             $result = $this->conn
                 ->query("
-                    INSERT pembelian_tiket(id_user, tanggal, jumlah_tiket, id_wisata, total_harga)
+                    INSERT tiket(id_user, tanggal, jumlah_tiket, id_wisata, total_harga)
                     VALUES ($idUser, $tanggal, $jumlahTiket, $idWisata, $totalHarga)
                 ");
 
@@ -131,6 +131,17 @@
                 return $this->failedResponse(41, 'failed to buy ticket');
             }
             
+        }
+
+        //! can only update date
+        public function updateTicket($idTicket, $tanggal){
+            $result = $this->conn->query("UPDATE tiket SET tanggal='$tanggal' WHERE id_tiket=$idTicket");
+
+            if($result){
+                return $this->successResponse('success to update ticket');
+            }else{
+                return $this->failedResponse(42, 'failed to update ticket');
+            }
         }
 
         private function isEmailExist($email){
@@ -170,6 +181,7 @@
 
         //* ticket error code
         //* 41-> failed to buy ticket
+        //* 42-> failed to update ticket
 
         //* user error code
         //* 51-> failed to update profile 
