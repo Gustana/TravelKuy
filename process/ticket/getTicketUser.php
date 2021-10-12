@@ -7,6 +7,7 @@
         $db = new Database();
 
         $db->getTicketUser($idUser);
+        
     }
 
 ?>
