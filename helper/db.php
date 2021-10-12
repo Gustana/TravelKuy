@@ -10,6 +10,8 @@
         public function registerUser($email, $pass, $nama, $usia, $jenisKelamin){
             if(!$this->isEmailExist($email)){
 
+                $pass = password_hash($pass, PASSWORD_DEFAULT);
+
                 $result = $this->conn
                 ->query("INSERT INTO user(email, pass, nama, usia, jenis_kelamin) 
                         VALUES('$email', '$pass', '$nama', $usia, $jenisKelamin)");
@@ -26,21 +28,9 @@
    
         }
 
-        public function isEmailExist($email){
-            $query = $this->conn
-                    ->query("SELECT email, pass FROM user WHERE email = '$email'");
-
-            if(!$query){
-                die('Unexpected error in function isEmailExist');
-            }
-
-            return $query->num_rows==1;
-            
-        }
-
-        //! admin default email admin@gmail.com
-        //! admin default password admin
-        //! admin default password already hashed
+        //* admin default email admin@gmail.com
+        //* admin default password admin
+        //* admin default password already hashed
 
         public function login($email, $password){
             if(strcmp($email, "admin@gmail.com")==0 && strcmp($password, '$2y$10$xQl591VMKcwlGsobdRt3f.abv7EiSVC7/10pOFpOied')==0){
@@ -48,8 +38,7 @@
                 return $this->successResponse('success to login as admin');
             }else{
                 if($this->isEmailExist($email)){
-                    //TODO verify password hash with password input
-                    //TODO add error code with corresponding error, see the error list below
+                   
                     $result = $this->conn->query("SELECT pass FROM user WHERE email = '$email'");
                     $result = $result->fetch_object();
 
@@ -62,6 +51,19 @@
                 }else{
                     return $this->failedResponse(21, 'email has\'t registered');
                 }
+            }
+        }
+
+        public function updateUser($idUser, $password, $nama, $usia, $jenisKelamin){
+            $result = $this->conn->query("UPDATE user 
+                                        SET pass='$password', nama='$nama', usia=$usia, jenis_kelamin=$jenisKelamin
+                                        WHERE id_user = $idUser
+                                    ");
+
+            if($result){
+                return $this->successResponse('success to update profile');
+            }else{
+                return $this->failedResponse(51, 'failed to update profile');
             }
         }
 
@@ -131,6 +133,18 @@
             
         }
 
+        private function isEmailExist($email){
+            $query = $this->conn
+                    ->query("SELECT email, pass FROM user WHERE email = '$email'");
+
+            if(!$query){
+                die('Unexpected error in function isEmailExist');
+            }
+
+            return $query->num_rows==1;
+            
+        }
+
         private function fetchData($result){
             while($row = $result->fetch_assoc()){
                 $data[] = $row;
@@ -155,7 +169,10 @@
         //* 34-> failed to get destination
 
         //* ticket error code
-        //* 41 ->faild to buy ticket
+        //* 41-> failed to buy ticket
+
+        //* user error code
+        //* 51-> failed to update profile 
 
         private function failedResponse($code, $message){
             return $this->encodeJson($code, $message);
