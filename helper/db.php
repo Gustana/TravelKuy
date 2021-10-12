@@ -97,6 +97,16 @@
             }
         }
 
+        public function getDestination(){
+            $result = $this->conn->query("SELECT * FROM wisata");
+
+            if($result){
+                return $this->successResponseWithData("success to get destination", $this->fetchData($result));
+            }else{
+                return $this->failedResponse(34, "failed to get destination");
+            }
+        }
+
         public function buyTicket($idUser, $tanggal, $jumlahTiket, $idWisata, $hargaTiket){
             $totalHarga = $hargaTiket * $jumlahTiket;
 
@@ -114,6 +124,15 @@
             
         }
 
+        private function fetchData($result){
+            while($row = $result->fetch_assoc()){
+                $data[] = $row;
+            }
+
+            return $data;
+        }
+
+
         //* register error code
         //* 11-> failed to register
         //* 12 -> email already registered
@@ -126,25 +145,44 @@
         //* 31-> failed to insert destination
         //* 32-> failed to update destination
         //* 33-> failed to delete destination
+        //* 34-> failed to get destination
 
         //* ticket error code
         //* 41 ->faild to buy ticket
 
-        public function failedResponse($code, $message){
+        private function failedResponse($code, $message){
             return $this->encodeJson($code, $message);
         }
 
         //* success response default code is 0
 
-        public function successResponse($message){
+        private function successResponse($message){
             return $this->encodeJson(0, $message);
         }
 
-        public function encodeJson($code, $message){
+        private function successResponseWithData($message, $data){
+            return $this->encodeJsonWithData(
+                0, 
+                $message,
+                $data
+            );
+        }
+
+        private function encodeJson($code, $message){
             echo json_encode(
                 array(
                     "code" => $code,
                     "message" => $message
+                )
+            );
+        }
+
+        private function encodeJsonWithData($code, $message, $data){
+            echo json_encode(
+                array(
+                    "code" => $code,
+                    "message" => $message,
+                    "data" => $data
                 )
             );
         }
