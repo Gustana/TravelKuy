@@ -50,8 +50,15 @@
                 if($this->isEmailExist($email)){
                     //TODO verify password hash with password input
                     //TODO add error code with corresponding error, see the error list below
+                    $result = $this->conn->query("SELECT pass FROM user WHERE email = '$email'");
+                    $result = $result->fetch_object();
 
-                    return $this->successResponse('success to login as user');
+                    if(password_verify($password, $result->pass)){
+                        return $this->successResponse('success to login as user');
+                    }else{
+                        return $this->failedResponse(22, 'failed to login, wrong password');
+                    }
+
                 }else{
                     return $this->failedResponse(21, 'email has\'t registered');
                 }
