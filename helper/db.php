@@ -162,9 +162,23 @@
             if($result){
                 $data = $this->fetchData($result);
 
-                return $this->successResponseWithData('succes to get user ticket list', $data);
+                return $this->successResponseWithData('succes to get ticket list for user', $data);
             }else{
-                return $this->failedResponse(44, 'failed to get user ticket list');
+                return $this->failedResponse(44, 'failed to get ticket list for user');
+            }
+        }
+
+        public function getTicketAdmin(){
+            $result = $this->conn
+                    ->query("SELECT t.tanggal, t.jumlah_tiket, t.total_harga, w.nama_wisata, w.lokasi_wisata, w.harga_wisata
+                            FROM tiket t JOIN wisata w ON t.id_wisata = w.id_wisata");
+
+            if($result){
+                $data = $this->fetchData($result);
+
+                return $this->successResponseWithData('succes to get ticket list for admin', $data);
+            }else{
+                return $this->failedResponse(45, 'failed to get ticket list for admin');
             }
         }
 
