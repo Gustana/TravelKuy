@@ -2,10 +2,11 @@
     require_once '../../helper/db.php';
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $idTicket = $_POST['id_tiket'];
+        $idUser = $_POST['id_user'];
 
         $db = new Database();
 
-        $db->deleteTicket($idTicket);
+        $db->getTicketUser($idUser);
     }
+
 ?>

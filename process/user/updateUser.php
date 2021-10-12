@@ -2,7 +2,7 @@
     require_once '../../helper/db.php';
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $idUser = $_POST['idUser'];
+        $idUser = $_POST['id_user'];
         $password = $_POST['password'];
         $nama = $_POST['nama'];
         $usia = $_POST['usia'];

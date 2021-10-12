@@ -154,6 +154,20 @@
             }
         }
 
+        public function getTicketUser($idUser){
+            $result = $this->conn
+                    ->query("SELECT t.tanggal, t.jumlah_tiket, t.total_harga, w.nama_wisata, w.lokasi_wisata, w.harga_wisata
+                            FROM tiket t JOIN wisata w ON t.id_wisata = w.id_wisata WHERE t.id_user=$idUser");
+
+            if($result){
+                $data = $this->fetchData($result);
+
+                return $this->successResponseWithData('succes to get user ticket list', $data);
+            }else{
+                return $this->failedResponse(44, 'failed to get user ticket list');
+            }
+        }
+
         private function isEmailExist($email){
             $query = $this->conn
                     ->query("SELECT email, pass FROM user WHERE email = '$email'");
@@ -193,6 +207,8 @@
         //* 41-> failed to buy ticket
         //* 42-> failed to update ticket
         //* 43-> failed to delete ticket
+        //* 44-> failed to get ticket user
+        //* 45-> failed to get ticket admin
 
         //* user error code
         //* 51-> failed to update profile 
