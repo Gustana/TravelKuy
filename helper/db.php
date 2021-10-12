@@ -144,6 +144,16 @@
             }
         }
 
+        public function deleteTicket($idTicket){
+            $result = $this->conn->query("DELETE FROM tiket WHERE id_tiket = $idTicket");
+
+            if($result){
+                return $this->successResponse('success to delete ticket');
+            }else{
+                return $this->failedResponse(43, 'failed to delete ticket');
+            }
+        }
+
         private function isEmailExist($email){
             $query = $this->conn
                     ->query("SELECT email, pass FROM user WHERE email = '$email'");
@@ -182,6 +192,7 @@
         //* ticket error code
         //* 41-> failed to buy ticket
         //* 42-> failed to update ticket
+        //* 43-> failed to delete ticket
 
         //* user error code
         //* 51-> failed to update profile 
