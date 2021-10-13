@@ -5,5 +5,6 @@
         $db = new Database();
 
         $db->getDestination();
+        
     }
 ?>
