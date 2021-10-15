@@ -28,6 +28,16 @@
    
         }
 
+        public function activateEmail($email){
+            $result = $this->conn->query("UPDATE user SET status=1 WHERE email = '$email'");
+
+            if($result){
+                return $this->successResponse('success activate account');
+            }else{
+                return $this->failedResponse(13, 'failed to activate account');
+            }
+        }
+
         //* admin default email admin@gmail.com
         //* admin default password admin
         //* admin default password already hashed
@@ -38,14 +48,19 @@
                 return $this->successResponse('success to login as admin');
             }else{
                 if($this->isEmailExist($email)){
-                   
-                    $result = $this->conn->query("SELECT pass FROM user WHERE email = '$email'");
-                    $result = $result->fetch_object();
 
-                    if(password_verify($password, $result->pass)){
-                        return $this->successResponse('success to login as user');
+                    if($this->isEmailActivated($email)){
+
+                        $result = $this->conn->query("SELECT pass FROM user WHERE email = '$email'");
+                        $result = $result->fetch_object();
+
+                        if(password_verify($password, $result->pass)){
+                            return $this->successResponse('success to login as user');
+                        }else{
+                            return $this->failedResponse(22, 'failed to login, wrong password');
+                        }
                     }else{
-                        return $this->failedResponse(22, 'failed to login, wrong password');
+                        return $this->failedResponse(23, 'email has\'t activated');
                     }
 
                 }else{
@@ -182,6 +197,16 @@
             }
         }
 
+        private function isEmailActivated($email){
+            $result = $this->conn->query("SELECT status FROM user WHERE email='$email'");
+
+            if(!$result){
+                die('Unexpected error in function isEmailActivated');
+            }
+
+            return $result->fetch_object()->status==1;
+        }
+
         private function isEmailExist($email){
             $query = $this->conn
                     ->query("SELECT email, pass FROM user WHERE email = '$email'");
@@ -205,11 +230,13 @@
 
         //* register error code
         //* 11-> failed to register
-        //* 12 -> email already registered
+        //* 12-> email already registered
+        //* 13-> failed to activate account
 
         //* login error code
         //* 21-> email hasn't registered
         //* 22-> wrong password
+        //* 23-> email hasn't acctivated
 
         //* destination error code
         //* 31-> failed to insert destination
