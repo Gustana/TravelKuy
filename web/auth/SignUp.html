@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link rel="stylesheet" href="../style/style.css" />
+    <title>Sign Up Travelkuy</title>
+
+    <nav class="navbar fixed-top" style="background-color: rgba(255, 255, 255, 0.8)">
+      <div class="container-fluid">
+        <a href="../index.html"><button type="button" class="btn mark navbar-brand mb-0 h1" style="color: rgb(0, 0, 0)">Travelkuy</button></a>
+        <div>
+          <a href="SignIn.html"><button type="button" class="btn mark" style="color: rgb(0, 0, 0)">Login</button></a>
+          <a href="SignUp.html"><button type="button" class="btn mark" style="color: rgb(0, 0, 0)">Sign Up</button></a>
+        </div>
+      </div>
+    </nav>
+  </head>
+  <body>
+    <div>
+      <form action="dashboardUser.html" method="" class="box" style="width: 75%">
+        <h2 style="text-align: center">Sign Up</h2>
+        <center>
+          <hr size="10" />
+        </center>
+        <div class="row g-3">
+          <div class="form-group col">
+            <p style="text-align: left; margin-bottom: 0px">Name</p>
+            <input type="text" name="name" class="form-control textedit" id="name" placeholder="Enter Your Name" />
+          </div>
+          <div class="form-group col">
+            <p style="text-align: left; margin-bottom: 0px">Email</p>
+            <input type="email" name="email" class="form-control textedit" id="email" placeholder="Enter Your Email" />
+          </div>
+        </div>
+
+        <div class="row g-3" style="margin-top: 0px">
+          <div class="form-group col">
+            <p style="text-align: left; margin-bottom: 0px">Age</p>
+            <input type="number" name="age" class="form-control textedit" id="age" placeholder="Enter Your Age" />
+          </div>
+          <div class="form-group col">
+            <label for="validationCustom04" class="form-label" style="text-align: left; margin-bottom: 0px">Gender</label>
+            <select class="form-select textedit" id="gender" required>
+              <option selected disabled value="">Please Select...</option>
+              <option value="1">Male</option>
+              <option value="2">Female</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3" style="margin-top: 0.1px">
+          <div class="form-group col">
+            <p style="text-align: left; margin-bottom: 0px">Password</p>
+            <input type="password" name="password" id="pass" class="form-control textedit" placeholder="Enter Your Password" />
+          </div>
+          <div class="form-group col">
+            <p style="text-align: left; margin-bottom: 0px">Confirm Password</p>
+            <input type="password" name="checkpassword" class="form-control textedit" placeholder="Enter Your Password" />
+          </div>
+        </div>
+
+        <center>
+          <div>
+            <button type="button" id="register" class="btn outline" style="margin-top: 20px">Sign Up</button>
+          </div>
+          <div>
+            <span>have an account? <a href="SignIn.html">Sign In</a></span>
+          </div>
+        </center>
+      </form>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $('#register').click(function(){
+        $.ajax({
+          type: 'POST',
+          url: '../../API/process/auth/register.php',
+          data: {
+            email: $('#email').val(),
+            pass: $('#pass').val(),
+            nama: $('#name').val(),
+            usia: $('#age').val(),
+            jenis_kelamin: $('#gender').find(':selected').val()
+          },
+          dataType: 'json',
+          success: function(data){
+            alert(data.message);
+          }
+        })
+      })
+    </script>
+  </body>
+</html>
