@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link rel="stylesheet" href="../../style/style.css" />
+    <title>Buy Ticket</title>
+
+    <nav class="navbar fixed-top" style="background-color: rgba(255, 255, 255, 0.8)">
+      <div class="container-fluid">
+        <button type="button" class="btn mark navbar-brand mb-0 h1" style="color: rgb(0, 0, 0)" id="index">TravelKuy</button>
+        <div>
+          <button type="button" class="btn mark" style="color: rgb(0, 0, 0)" id="myTicket">My Tickets</button>
+          <button type="button" class="btn mark buy" style="color: rgb(0, 0, 0)">Buy Tickets</button>
+          <button type="button" class="btn mark" style="color: rgb(0, 0, 0)" id="profile">Welcome, User</button>
+        </div>
+      </div>
+    </nav>
+
+    <style>
+      #map{
+        width: 100%;
+        height: 350px;
+      }
+    </style>
+  </head>
+  <body class="gradient">
+
+    <div class="container-sm" style="width: 100%;">
+      <div class="row">
+        <div class="col-sm-12">
+          <div id="map_holder"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function(){
+        var idUser = new URLSearchParams(document.location.search.substring(1))
+        idUser = idUser.get('idUser')
+
+        $('#index').click(function(){
+          window.location.href = 'index.html?idUser='+idUser
+        })
+
+        $('.buy').click(function(){
+          window.location.href = 'buyTicket.html?idUser='+idUser
+        })
+
+        $('#myTicket').click(function(){
+          window.location.href = 'MyTickets.html?idUser='+idUser
+        })
+
+        $('#profile').click(function(){
+          window.location.href = 'profileUser.html?idUser='+idUser
+        })
+  
+        $.ajax({
+          type: 'GET',
+          url: '../../../API/process/destination/getDestination.php',
+          dataType: 'json',
+          success: function (destinationData) {
+  
+            $.each(destinationData.data, function (key, data) {
+              var destination =
+              '<input type="hidden" id="idDestination" value="'+ data.id_wisata +'">'+
+              '<div class="details" style="background-color: white">'+
+                '<div class="row mt-3 form-group col">'+
+                  '<label for="Name" class="col-sm-2 col-form-label ms-5" style="text-align: left; margin-bottom: 0px">Nama Wisata</label>'+
+                  '<div class="col-sm-4">'+
+                    '<input type="text" name="name" class="form-control textedit" value="'+ data.nama_wisata +'" disabled>'+
+                  '</div>'+
+                '</div>'+
+                '<div class="row mt-3 form-group col">'+
+                  '<label for="Location" class="col-sm-2 col-form-label ms-5" style="text-align: left; margin-bottom: 0px">Lokasi</label>'+
+                  '<div class="col-sm-4">'+
+                    '<input type="text" name="location" class="form-control textedit" value="'+ data.lokasi_wisata +'" disabled>'+
+                  '</div>'+
+                '</div>'+
+                '<div class="row mt-3 form-group col">'+
+                  '<label for="Price" class="col-sm-2 col-form-label ms-5" style="text-align: left; margin-bottom: 0px">Harga</label>'+
+                  '<div class="col-sm-3">'+
+                    '<p>Rp. </p>'+
+                    '<input type="number" name="price" id="price" class="form-control textedit" disabled value="'+ data.harga_wisata +'" style="margin-left: 1cm; margin-top: -43px;">'+
+                  '</div>'+
+                '</div>'+
+                '<div class="row mt-3 form-group col">'+
+                  '<label for="amount" class="col-sm-2 col-form-label ms-5" style="text-align: left; margin-bottom: 0px">Jumlah</label>'+
+                  '<div class="col-sm-4">'+
+                    '<input type="number" name="amount" id="amount" class="form-control textedit">'+
+                  '</div>'+
+                '</div>'+
+                '<div class="row mt-3 form-group col">'+
+                  '<label for="date" class="col-sm-2 col-form-label ms-5" style="text-align: left; margin-bottom: 0px">Tanggal</label>'+
+                  '<div class="col-sm-4">'+
+                    '<input type="date" name="date" id="date" class="form-control textedit">'+
+                  '</div>'+
+                '</div>'+
+                '<div class="row mt-3 form-group col">'+
+                  '<label for="totalPrice" class="col-sm-2 col-form-label ms-5" style="text-align: left; margin-bottom: 0px">Total Harga</label>'+
+                  '<div class="col-sm-3">'+
+                    '<p>Rp. </p>'+
+                    '<input type="number" name="totalPrice" id="totalPrice" class="form-control textedit" disabled style="margin-left: 1cm; margin-top: -43px;">'+
+                  '</div>'+
+                '</div>'+
+                '<div style="margin-top: 50px; margin-left: 15cm;">'+
+                  '<button class="btn btn-success" style="width: 30%;" type="button" id="buy">Buy Ticket</button>'+
+                '</div>'+
+              '</div>'+
+              '<br><br>'
+  
+              $(document.body).append(destination)
+
+              var iDiv =  document.createElement('iframe');
+              
+              iDiv.id = 'map';
+              iDiv.src = "https://www.google.com/maps/embed/v1/place?key=AIzaSyBfcOumJidAiL3hThqso9HuF_VF33GD2zA&q="+ destinationData.data[0].lat +","+ destinationData.data[0].lng +"&zoom=18&maptype=satellite";
+
+              document.getElementById("map_holder").appendChild(iDiv);
+            })
+
+            $('#amount').keyup(function(){
+              var price = $('#price').val()
+              var amount = $('#amount').val()
+              $('#totalPrice').val(price*amount)
+            })
+
+            $('#buy').click(function(){
+              console.log($('#date').val())
+              $.ajax({
+                type: 'POST',
+                url: '../../../API/process/ticket/buyTicket.php',
+                data: {
+                  id_user: idUser,
+                  tanggal: $('#date').val(),
+                  jumlah_tiket: $('#amount').val(),
+                  id_wisata: $('#idDestination').val(),
+                  harga: $('#price').val()
+                },
+                dataType: 'json',
+                success: function(data){
+                  alert(data.message)
+                }
+              })
+            })
+  
+          }
+        })
+  
+      })
+      
+    </script>
+  </body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link rel="stylesheet" href="../../style/style.css" />
+    <title>Profile User</title>
+
+    <nav class="navbar fixed-top" style="background-color: rgba(255, 255, 255, 0.8)">
+      <div class="container-fluid">
+        <button type="button" class="btn mark navbar-brand mb-0 h1" style="color: rgb(0, 0, 0)" id="index">TravelKuy</button>
+        <div>
+            <button type="button" class="btn mark" style="color: rgb(0, 0, 0)" id="myTicket">My Tickets</button>
+            <button type="button" class="btn mark buy" style="color: rgb(0, 0, 0)">Buy Tickets</button>
+            <button type="button" class="btn mark" style="color: rgb(0, 0, 0)" id="profile">Welcome, User</button>
+        </div>
+      </div>
+    </nav>
+  </head>
+  <body class="gradient">
+    <div id="profileInfo">
+        <center>
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8whvraQ8GE5WRpAHd-7-v2m-rccRLF8BMPNG92HhmHB1T0yxxa4fPEPDvfXtYfew7FBE&usqp=CAU" alt="Profile Pic" width="180" height="180" class="mt-3">
+        </center>
+    </div>
+    <div id="profileDesc">
+        <div class="ms-5 pt-4 fontBig">
+            <p id="usernameText"></p>
+            <p id="emailText"></p>
+        </div>
+    </div>
+    <div id="profileForm">
+        
+      <h2 style="text-align: center">Personal Information</h2>
+      <center>
+          <hr size="10" style="color: black;">
+      </center>
+      <div class="formDesc">
+
+          <div class="row mt-3 form-group col">
+              <label for="Name" class="col-sm-2 col-form-label ms-5" style="text-align: left; margin-bottom: 0px">Name</label>
+              <div class="col-sm-6">
+                  <input type="text" name="name" class="form-control textedit" id="name">
+              </div>
+          </div>
+
+          <div class="row mt-3 form-group col">
+              <label for="email" class="col-sm-2 col-form-label ms-5" style="text-align: left; margin-bottom: 0px">Email</label>
+              <div class="col-sm-6">
+                  <input type="email" name="email" class="form-control textedit" id="email" disabled>
+              </div>
+          </div>
+
+          <div class="row mt-3 form-group col">
+              <label for="age" class="col-sm-2 col-form-label ms-5" style="text-align: left; margin-bottom: 0px">Age</label>
+              <div class="col-sm-6">
+                  <input type="number" name="age" class="form-control textedit" id="age">
+              </div>
+          </div>
+
+          <div class="row mt-3 form-group col">
+              <label for="gender" class="col-sm-2 col-form-label ms-5" style="text-align: left; margin-bottom: 0px">Gender</label>
+              <div class="col-sm-6">
+                  <select class="form-select textedit" id="gender">
+                      <option>Male</option>
+                      <option>Female</option>
+                  </select>
+              </div>
+          </div>
+
+          <div class="row mt-3 form-group col">
+              <label for="pass" class="col-sm-2 col-form-label ms-5" style="text-align: left; margin-bottom: 0px">Password</label>
+              <div class="col-sm-6">
+                  <input type="password" name="pass" class="form-control textedit" placeholder="New Password" id="pass">
+              </div>
+          </div>
+
+          <br>
+          <div style="margin-left: 5cm; margin-top: 20px;">
+              <button class="btn outline me-5" style="border-radius: 30px; width: 15%;" id="update">Update</button>
+              <a href="../../index.html"><button type="button" class="btn logout ms-5" style="border-radius: 30px; width: 15%;">Logout</button></a>
+          </div>
+      </div>
+          
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function(){
+        var idUser = new URLSearchParams(document.location.search.substring(1))
+        idUser = idUser.get('idUser')
+
+        $('#index').click(function(){
+          window.location.href = 'index.html?idUser='+idUser
+        })
+
+        $('.buy').click(function(){
+          window.location.href = 'buyTicket.html?idUser='+idUser
+        })
+
+        $('#myTicket').click(function(){
+          window.location.href = 'MyTickets.html?idUser='+idUser
+        })
+
+        $('#profile').click(function(){
+          window.location.href = 'profileUser.html?idUser='+idUser
+        })
+
+        $.ajax({
+          type: 'GET',
+          url: '../../../API/process/user/getProfileUser.php?id_user='+idUser,
+          dataType: 'json',
+          success: function (response) {
+            userData = response.data[0]
+            
+            $('#usernameText').text(userData.nama)
+            $('#emailText').text(userData.email)
+            $('#name').val(userData.nama)
+            $('#email').val(userData.email)
+            $('#age').val(userData.usia)
+
+            if(userData.jenis_kelamin==1){
+                $('#gender').val('Male').change()
+            }else{
+                $('#gender').val('Female').change()
+            }
+          }
+        })
+    
+        $('#update').click(function(){
+          var gender;
+
+          if($('#gender').val() == 'Male'){
+            gender = 1;
+          }else{
+            gender = 2;
+          }
+
+          $.ajax({
+            type: 'POST',
+            url: '../../../API/process/user/updateProfileUser.php?id_user='+idUser,
+            data:{
+              id_user: idUser,
+              nama: $('#name').val(),
+              usia: $('#age').val(),
+              jenis_kelamin: gender,
+              password: $('#pass').val()
+            },
+            dataType: 'json',
+            success: function(response){
+              alert(response.message)
+            }
+          })
+        })
+
+      })
+    </script>
+
+  </body>
+</html>

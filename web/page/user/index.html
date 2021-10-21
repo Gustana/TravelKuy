@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link rel="stylesheet" href="../../style/style.css" />
+    <title>Dashboard User</title>
+
+    <nav class="navbar fixed-top" style="background-color: rgba(255, 255, 255, 0.8)">
+      <div class="container-fluid">
+        <button type="button" class="btn mark navbar-brand mb-0 h1" style="color: rgb(0, 0, 0)" id="index">TravelKuy</button>
+        <div>
+          <button type="button" class="btn mark" style="color: rgb(0, 0, 0)" id="myTicket">My Tickets</button>
+          <button type="button" class="btn mark buy" style="color: rgb(0, 0, 0)">Buy Tickets</button>
+          <button type="button" class="btn mark" style="color: rgb(0, 0, 0)" id="profile">Welcome, User</button>
+        </div>
+      </div>
+    </nav>
+  </head>
+  <body class="gradient">
+    <div class="position-absolute top-50 start-50 translate-middle">
+      <div>
+        <h1 class="">Start Your Journey</h1>
+      </div>
+      <div>
+        <button class="btn dashboard-button buy">Buy Tickets</button>
+      </div>
+    </div>
+  </body>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      var idUser = new URLSearchParams(document.location.search.substring(1))
+      idUser = idUser.get('idUser')
+
+      $('#index').click(function(){
+        window.location.href = 'index.html?idUser='+idUser
+      })
+
+      $('.buy').click(function(){
+        window.location.href = 'buyTicket.html?idUser='+idUser
+      })
+
+      $('#myTicket').click(function(){
+        window.location.href = 'MyTickets.html?idUser='+idUser
+      })
+
+      $('#profile').click(function(){
+        window.location.href = 'profileUser.html?idUser='+idUser
+      })
+    })
+  </script>
+
+</html>
