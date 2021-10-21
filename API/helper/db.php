@@ -17,7 +17,10 @@
                         VALUES('$email', '$pass', '$nama', $usia, $jenisKelamin)");
 
                 if($result){
+                    require_once('./sendEmail.php');
+
                     return $this->successResponse("success register");
+                    
                 }else{
                     return $this->failedResponse(11, "failed to register");
                 }
@@ -43,7 +46,7 @@
         //* admin default password already hashed
 
         public function login($email, $password){
-            if(strcmp($email, "admin@gmail.com")==0 && strcmp($password, '$2y$10$xQl591VMKcwlGsobdRt3f.abv7EiSVC7/10pOFpOied')==0){
+            if(strcmp($email, "admin@gmail.com")==0 && password_verify($password, '$2y$10$C116DAUoOsolvU/be.fnd.zw7Q5mDnpN6hfdlKPe0/uKpwlxXblne')==0){
                 //success login as admin
                 return $this->successResponse('success to login as admin');
             }else{
@@ -51,11 +54,11 @@
 
                     if($this->isEmailActivated($email)){
 
-                        $result = $this->conn->query("SELECT pass FROM user WHERE email = '$email'");
+                        $result = $this->conn->query("SELECT id_user, pass FROM user WHERE email = '$email'");
                         $result = $result->fetch_object();
 
                         if(password_verify($password, $result->pass)){
-                            return $this->successResponse('success to login as user');
+                            return $this->successResponseLogin($result->id_user, 'success to login as user');
                         }else{
                             return $this->failedResponse(22, 'failed to login, wrong password');
                         }
@@ -69,7 +72,18 @@
             }
         }
 
-        public function updateUser($idUser, $password, $nama, $usia, $jenisKelamin){
+        public function getProfileUser($idUser){
+            $result = $this->conn->query("SELECT * FROM user WHERE id_user = $idUser");
+
+            if($result){
+                return $this->successResponseWithData('success to get user profile', $this->fetchData($result));
+            }else{
+                return $this->failedResponse(52, 'failed to get user profile');
+            }
+        }
+
+        //!! can't update email
+        public function updateProfileUser($idUser, $password, $nama, $usia, $jenisKelamin){
             $result = $this->conn->query("UPDATE user 
                                         SET pass='$password', nama='$nama', usia=$usia, jenis_kelamin=$jenisKelamin
                                         WHERE id_user = $idUser
@@ -82,10 +96,10 @@
             }
         }
 
-        public function insertDestination($namaWisata, $lokasiWisata, $hargaWisata){
+        public function insertDestination($namaWisata, $lokasiWisata, $hargaWisata, $latitude, $longtitude){
             $result = $this->conn
-            ->query("INSERT INTO wisata(nama_wisata, lokasi_wisata, harga_wisata)
-                    VALUES('$namaWisata', '$lokasiWisata', $hargaWisata)");
+            ->query("INSERT INTO wisata(nama_wisata, lokasi_wisata, harga_wisata, lat, lng)
+                    VALUES('$namaWisata', '$lokasiWisata', $hargaWisata, $latitude, $longtitude)");
 
             if($result){
                 return $this->successResponse('success to insert destination');
@@ -94,13 +108,15 @@
             }
         }
 
-        public function updateDestination($idWisata, $namaWisata, $lokasiWisata, $hargaWisata){
+        public function updateDestination($idWisata, $namaWisata, $lokasiWisata, $hargaWisata, $latitude, $longtitude){
             $result = $this->conn
             ->query("
                 UPDATE wisata SET 
                 nama_wisata = '$namaWisata',
                 lokasi_wisata = '$lokasiWisata',
-                harga_wisata = '$hargaWisata'
+                harga_wisata = $hargaWisata,
+                lat = $latitude,
+                lng = $longtitude
                 WHERE id_wisata = $idWisata
             ");
 
@@ -131,13 +147,23 @@
             }
         }
 
+        public function getDestinationDetail($idDestination){
+            $result = $this->conn->query("SELECT * FROM wisata WHERE id_wisata = $idDestination");
+
+            if($result){
+                return $this->successResponseWithData("success to get destination detail", $this->fetchData($result));
+            }else{
+                return $this->failedResponse(35, "failed to get destination detail");
+            }
+        }
+
         public function buyTicket($idUser, $tanggal, $jumlahTiket, $idWisata, $hargaTiket){
             $totalHarga = $hargaTiket * $jumlahTiket;
 
             $result = $this->conn
                 ->query("
                     INSERT tiket(id_user, tanggal, jumlah_tiket, id_wisata, total_harga)
-                    VALUES ($idUser, $tanggal, $jumlahTiket, $idWisata, $totalHarga)
+                    VALUES ($idUser, '$tanggal', $jumlahTiket, $idWisata, $totalHarga)
                 ");
 
             if($result){
@@ -171,7 +197,7 @@
 
         public function getTicketUser($idUser){
             $result = $this->conn
-                    ->query("SELECT t.tanggal, t.jumlah_tiket, t.total_harga, w.nama_wisata, w.lokasi_wisata, w.harga_wisata
+                    ->query("SELECT t.*, w.*
                             FROM tiket t JOIN wisata w ON t.id_wisata = w.id_wisata WHERE t.id_user=$idUser");
 
             if($result){
@@ -185,8 +211,9 @@
 
         public function getTicketAdmin(){
             $result = $this->conn
-                    ->query("SELECT t.tanggal, t.jumlah_tiket, t.total_harga, w.nama_wisata, w.lokasi_wisata, w.harga_wisata
-                            FROM tiket t JOIN wisata w ON t.id_wisata = w.id_wisata");
+                    ->query("SELECT t.*, w.*, u.*
+                            FROM tiket t JOIN wisata w ON t.id_wisata = w.id_wisata
+                            JOIN user u ON t.id_user = u.id_user");
 
             if($result){
                 $data = $this->fetchData($result);
@@ -243,6 +270,7 @@
         //* 32-> failed to update destination
         //* 33-> failed to delete destination
         //* 34-> failed to get destination
+        //* 35-> failed to get destination detail
 
         //* ticket error code
         //* 41-> failed to buy ticket
@@ -253,6 +281,7 @@
 
         //* user error code
         //* 51-> failed to update profile 
+        //* 52-> failed to get user profile 
 
         private function failedResponse($code, $message){
             return $this->encodeJson($code, $message);
@@ -262,6 +291,11 @@
 
         private function successResponse($message){
             return $this->encodeJson(0, $message);
+        }
+
+        private function successResponseLogin($idUser, $message){
+            //* code became idUser
+            return $this->encodeJson($idUser, $message);
         }
 
         private function successResponseWithData($message, $data){

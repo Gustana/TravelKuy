@@ -7,9 +7,10 @@
         $nama = $_POST['nama'];
         $usia = $_POST['usia'];
         $jenisKelamin = $_POST['jenis_kelamin'];
+        $password = password_hash($password, PASSWORD_DEFAULT);
 
         $db = new Database();
 
-        $db->updateUser($idUser, $password, $nama, $usia, $jenisKelamin);
+        $db->updateProfileUser($idUser, $password, $nama, $usia, $jenisKelamin);
     }
 ?>

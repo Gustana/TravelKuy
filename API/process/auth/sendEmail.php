@@ -1,32 +1,34 @@
 <?php
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
+    use PHPMailer\PHPMailer\SMTP;
 
     require_once 'PHPMailer/vendor/autoload.php';
 
     $mail = new PHPMailer(true);
 
     $email = $_POST['email'];
+    $username = $_POST['nama'];
 
     try {
-        $mail->SMTPDebug = 1;
+        $mail->SMTPDebug = SMTP::DEBUG_OFF;
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = '';
-        $mail->Password   = '';
+        $mail->Username   = 'lalalelee99@gmail.com';
+        $mail->Password   = 'hahahehe123!';
         $mail->SMTPSecure = 'tls';
         $mail->Port       = 587;
     
         $mail->setFrom('lalalelee99@gmail.com', 'Admin');
-        $mail->addAddress($email, 'User');
+        $mail->addAddress($email, $username);
     
         $mail->isHTML(true);
         $mail->Subject = 'Congratulations!';
         $mail->Body    = "
                             Your Account has registered, please activate by click button below
                             <br>
-                            <a href='http://localhost/PAW/TravelKuy/API/process/auth/activateEmail.php?email=$email'>
+                            <a href='http://localhost/PAW/tubes/TravelKuy/API/process/auth/activateEmail.php?email=$email'>
                                 <button>Activate</button>
                             </a>
                         ";

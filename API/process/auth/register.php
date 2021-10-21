@@ -11,8 +11,6 @@
         $jenisKelamin = $_POST['jenis_kelamin'];
 
         $db->registerUser($email, $pass, $nama, $usia, $jenisKelamin);
-
-        require_once('./sendEmail.php');
         
     }
 
