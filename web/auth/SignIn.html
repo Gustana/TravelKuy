@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link rel="stylesheet" href="../style/style.css" />
+    <title>Sign In Travelkuy</title>
+
+    <nav class="navbar fixed-top" style="background-color: rgba(255, 255, 255, 0.8)">
+      <div class="container-fluid">
+        <a href="../index.html"><button type="button" class="btn mark navbar-brand mb-0 h1" style="color: rgb(0, 0, 0)">Travelkuy</button></a>
+        <div>
+          <a href="SignIn.html"><button type="button" class="btn mark" style="color: rgb(0, 0, 0)">Login</button></a>
+          <a href="SignUp.html"><button type="button" class="btn mark" style="color: rgb(0, 0, 0)">Sign Up</button></a>
+        </div>
+      </div>
+    </nav>
+  </head>
+  <body>
+    <div>
+      <center>
+        <form action="dashboardUser.html" method="" class="box">
+          <h2>LOGIN</h2>
+          <hr size="10" />
+          <div class="form-group">
+            <p style="text-align: left; margin-bottom: 0px">Email</p>
+            <input type="text" name="email" class="form-control textedit" id="email" placeholder="Enter Your Email" />
+          </div>
+          <div class="form-group">
+            <p style="text-align: left; margin-bottom: 0px; margin-top: 10px">Password</p>
+            <input type="password" name="password" class="form-control textedit" id="pass" placeholder="Enter Your Password" />
+          </div>
+          <div>
+            <button type="button" class="btn outline" style="margin-top: 20px" id="login">Sign In</button>
+          </div>
+          <div>
+            <span>Don't have account? <a href="SignUp.html">Sign Up</a></span>
+          </div>
+        </form>
+      </center>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $('#login').click(function(){
+        $.ajax({
+          type: 'POST',
+          url: '../../API/process/auth/login.php',
+          data:{
+            email: $('#email').val(),
+            pass: $('#pass').val()
+          },
+          dataType: 'json',
+          success: function(data){
+            alert(data.message);
+            
+            if(data.message == 'success to login as admin'){
+              window.location.href = '../page/admin/'
+            }else if(data.message == 'success to login as user'){
+              window.location.href = '../page/user/?idUser='+data.code
+            }
+            
+          }
+        })
+      })
+    </script>
+  </body>
+</html>
